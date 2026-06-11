@@ -9,7 +9,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useBookingStore } from '../stores/booking'
 const bookingStore = useBookingStore()
 </script>
