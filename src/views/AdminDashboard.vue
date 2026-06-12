@@ -54,6 +54,7 @@
             <label class="text-xs font-bold text-slate-400 uppercase block mb-2">Filter by Status</label>
             <select
               v-model="filters.status"
+              @change="fetchBookings"
               class="px-4 py-2 bg-slate-900 border border-slate-800 rounded-lg text-white focus:outline-none focus:border-purple-500"
             >
               <option value="">All Statuses</option>
@@ -63,12 +64,14 @@
           </div>
           <div>
             <label class="text-xs font-bold text-slate-400 uppercase block mb-2">Filter by Show</label>
-            <input
+            <select
               v-model="filters.showId"
-              type="text"
-              placeholder="show_id"
+              @change="fetchBookings"
               class="px-4 py-2 bg-slate-900 border border-slate-800 rounded-lg text-white focus:outline-none focus:border-purple-500"
-            />
+            >
+              <option value="">All Shows</option>
+              <option v-for="show in shows" :key="show.id" :value="show.id">{{ show.name }}</option>
+            </select>
           </div>
           <button
             @click="fetchBookings"
@@ -102,7 +105,7 @@
               >
                 <td class="px-6 py-4 text-sm">{{ booking.user_id }}</td>
                 <td class="px-6 py-4 text-sm">{{ booking.user_email ? maskEmail(booking.user_email) : '-' }}</td>
-                <td class="px-6 py-4 text-sm text-slate-400">{{ booking.show_id || '-' }}</td>
+                <td class="px-6 py-4 text-sm font-bold text-white">{{ getShowName(booking.show_id) }}</td>
                 <td class="px-6 py-4 text-sm">
                   <span class="px-3 py-1 bg-slate-700 rounded-full text-xs font-bold">{{ booking.seat_no }}</span>
                 </td>
@@ -214,6 +217,14 @@ const stats = ref<{ total_bookings: number; total_audit_logs: number } | null>(n
 
 const filters = ref({ userId: '', status: '', showId: '' })
 const logFilters = ref({ event: '' })
+
+const shows = [
+  { id: 'spider-man', name: 'Spider-Man: No Way Home' },
+  { id: 'avengers-endgame', name: 'Avengers: Endgame' },
+  { id: 'doctor-strange', name: 'Doctor Strange 2' }
+]
+
+const getShowName = (id: string) => shows.find(s => s.id === id)?.name || id
 
 const fetchDashboard = async () => {
   try {

@@ -10,8 +10,10 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useBookingStore } from '../stores/booking'
+import { useAuthStore } from '../stores/auth'
 
 const bookingStore = useBookingStore()
+const authStore = useAuthStore()
 const seats = computed(() => bookingStore.seats)
 
 const getSeatClass = (seat: any) => {
@@ -30,6 +32,9 @@ const getSeatClass = (seat: any) => {
 }
 
 const selectSeat = (seat: any) => {
-  if (seat.status === 'AVAILABLE') bookingStore.selectedSeat = seat.seat_no
+  const isMyLocked = seat.status === 'LOCKED' && (seat.user_id === authStore.user?.id || bookingStore.lockedSeat === seat.seat_no)
+  if (seat.status === 'AVAILABLE' || isMyLocked) {
+    bookingStore.selectedSeat = seat.seat_no
+  }
 }
 </script>
