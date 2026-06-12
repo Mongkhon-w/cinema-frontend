@@ -6,6 +6,7 @@ export interface Seat {
   show_id: string;
   seat_no: string;
   status: 'AVAILABLE' | 'LOCKED' | 'BOOKED';
+  user_id?: string;
 }
 
 export const useBookingStore = defineStore('booking', {
@@ -16,13 +17,14 @@ export const useBookingStore = defineStore('booking', {
     bookedSeat: '', 
     logs: [] as string[],
     ws: null as WebSocket | null,
-    showId: 'default-show'
+    showId: ''
   }),
   actions: {
     addLog(msg: string) {
       this.logs.unshift(`[${new Date().toLocaleTimeString()}] ${msg}`)
     },
     async fetchSeats() {
+      if (!this.showId) return
       try {
         const res = await apiClient.get(`/seats?show_id=${this.showId}`)
         this.seats = res.data.seats || []

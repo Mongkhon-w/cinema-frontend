@@ -8,6 +8,14 @@
         </h1>
       </div>
       <div class="flex items-center gap-4">
+        <select
+          v-model="bookingStore.showId"
+          @change="changeShow"
+          class="bg-slate-800 border border-slate-700 text-sm rounded-lg px-3 py-1.5 focus:outline-none focus:border-amber-500"
+        >
+          <option value="" disabled>-- กรุณาเลือกภาพยนตร์ --</option>
+          <option v-for="show in shows" :key="show.id" :value="show.id">{{ show.name }}</option>
+        </select>
         <router-link
           v-if="authStore.isAdmin"
           to="/admin"
@@ -26,8 +34,11 @@
     </header>
 
     <main class="flex-1 max-w-5xl w-full mx-auto p-6 grid grid-cols-1 md:grid-cols-3 gap-8">
-      <section class="md:col-span-2">
+      <section class="md:col-span-2" v-if="bookingStore.showId">
         <SeatMap />
+      </section>
+      <section class="md:col-span-2 flex items-center justify-center text-slate-500 min-h-[300px]" v-else>
+        กรุณาเลือกภาพยนตร์เพื่อดูผังที่นั่ง
       </section>
       <section class="flex flex-col gap-4">
         <ActionPanel />
@@ -58,6 +69,19 @@ const logout = () => {
   }
   authStore.logout()
   router.push('/login')
+}
+
+const shows = [
+  { id: 'spider-man', name: 'Spider-Man: No Way Home' },
+  { id: 'avengers-endgame', name: 'Avengers: Endgame' },
+  { id: 'doctor-strange', name: 'Doctor Strange 2' }
+]
+
+const changeShow = async () => {
+  bookingStore.selectedSeat = ''
+  bookingStore.lockedSeat = ''
+  bookingStore.bookedSeat = ''
+  await bookingStore.fetchSeats()
 }
 
 // โหลดข้อมูลเมื่อเข้าหน้าจอนี้
